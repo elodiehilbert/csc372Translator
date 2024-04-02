@@ -1,5 +1,7 @@
 Authors: 
 Jacob Truman [jtruman@arizona.edu](mailto:EMAIL)  
+Lucas Tuan [lucastuan@arizona.edu](mailto:EMAIL)  
+
 
 Date: SUBMISSION DATE
 
