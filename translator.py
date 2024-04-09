@@ -1,164 +1,120 @@
-# global_vars = {}
-#
-# def parse_code(code):
-#     lines = code.split('\n')
-#     global_vars = {}
-#     for line in lines:
-#         line = line.strip()
-#         if line:
-#             exec(parse_line(line), global_vars)
-#
-# def parse_line(line):
-#     tokens = line.split()
-#     if tokens[0] == 'out':
-#         arg = parse_output_arg(tokens[0][4:-1], global_vars)
-#         return f"print({arg})"
-#     elif len(tokens) >= 3 and tokens[1] == 'is':
-#         var_type = tokens[0][0]
-#         var_name = tokens[0][1:]
-#         value = parse_expr(var_type, tokens[2:], global_vars)
-#         return f"{var_name} = {value}"
-#     elif tokens[0] == 'in':
-#         var_name = tokens[1]
-#         prompt = ' '.join(tokens[3:])[1:-1]
-#         return f"{var_name} = input('{prompt}')"
-#     elif tokens[0] == 'for':
-#         init = parse_line(' '.join(tokens[1:tokens.index(';')])) + ';'
-#         condition = parse_bool_expr(' '.join(tokens[tokens.index(';') + 1:tokens.index('{')])) + ';'
-#         update = parse_line(' '.join(tokens[tokens.index('{') + 1:-1])) + ';'
-#         body = '\n'.join([parse_line(' '.join(tokens[tokens.index('{') + 1:-1]))])
-#         return f"for {init}\n    if not {condition}:\n        break\n    {body}\n    {update}"
-#     elif tokens[0] == 'if':
-#         condition = parse_bool_expr(' '.join(tokens[1:tokens.index(')')]))
-#         true_body = '\n'.join([parse_line(' '.join(tokens[tokens.index('{') + 1:tokens.index('}')]))])
-#         false_body = '\n'.join([parse_line(' '.join(tokens[tokens.index('}') + 2:-1]))])
-#         return f"if {condition}:\n    {true_body}\nelse:\n    {false_body}"
-#     else:
-#         raise ValueError(f"Invalid token: {tokens[0]}")
-#
-# def parse_output_arg(arg, global_vars):
-#     if arg.startswith('"'):
-#         return arg
-#     else:
-#         return f"global_vars['{arg}']"
-#
-# def parse_expr(var_type, tokens, global_vars):
-#     if '"' in tokens:
-#         value = '"' + ' '.join(tokens[tokens.index('"') + 1:tokens.index('"', tokens.index('"') + 1)]) + '"'
-#         if var_type == 'x':
-#             raise ValueError("Cannot assign string to integer variable")
-#         elif var_type == 'b':
-#             raise ValueError("Cannot assign string to boolean variable")
-#         return value
-#     elif any(char.isdigit() for char in tokens[0]) or (tokens[0].startswith('-') and any(char.isdigit() for char in tokens[0][1:])):
-#         value = tokens[0]
-#         if var_type == 'b':
-#             return 'True' if value != '0' else 'False'
-#         return value
-#     else:
-#         return f"global_vars['{tokens[0]}']"
-#
-# def parse_bool_expr(expr, global_vars):
-#     tokens = expr.split()
-#     expr = parse_expr('b', tokens, global_vars)
-#     while tokens and tokens[0] in ('<', '>', '=', '!', '='):
-#         op = tokens.pop(0)
-#         if op == '=':
-#             op = '=='
-#         elif op == '!=':
-#             op = '!='
-#         expr = f"{expr} {op} {parse_expr('b', tokens, global_vars)}"
-#     return expr
-#
-# # Example usage
-# input_code = """
-# xNum is 5
-# out (xNum)
-# """
-# parse_code(input_code)
+import re
 
 
-global_vars = {}
+def translate_to_python(code):
+    # Regex patterns
+    assignment_pattern = r'(x|b|s|l)\s*(\w+)\s*is\s*(.+)'
+    for_loop_pattern = r'for\((.*?)\s*(.*?)\;\s*(.*?)\)\{(.*?)\}'
+    while_loop_pattern = r'while\((.*?)\)\{(.*?)\}'
+    if_smt_pattern = r'if\((.*?)\)\s*then\s*\{(.*?)\}\s*else\s*\{(.*?)\}'
+    output_pattern = r'out\("(.*?)"\)|out\((.*?)\)'
+    input_pattern = r'(\w+)\s*is\s*in\("(.*?)"\)'
+    bool_expr_pattern = r'(0|1)|(.*?)\s*(<=|>=|!=|<|>)\s*(.*?)'
+    int_expr_pattern = r'(\d+)|(.*?)\s*([-+*/])\s*(.*?)'
+    list_expr_pattern = r'\[(.*?)\]'
 
-def parse_code(code):
-    lines = code.split('\n')
-    for line in lines:
-        line = line.strip()
-        if line:
-            exec(parse_line(line))
+    # Translate assignments
+    code = re.sub(assignment_pattern, lambda m: translate_assignment(m), code)
 
-def parse_line(line):
-    tokens = line.split()
-    if tokens[0] == 'out(':
-        arg = parse_output_arg(tokens[0][4:-1])
-        return f"print({arg})"
-    elif len(tokens) >= 3 and tokens[1] == 'is':
-        var_type = tokens[0][0]
-        var_name = tokens[0][1:]
-        value = parse_expr(var_type, tokens[2:])
-        global global_vars
-        global_vars[var_name] = eval(value)
-        return f"{var_name} = {value}"
-    elif tokens[0] == 'in':
-        var_name = tokens[1]
-        prompt = ' '.join(tokens[3:])[1:-1]
-        global global_vars
-        global_vars[var_name] = input(prompt)
-        return f"{var_name} = input('{prompt}')"
-    elif tokens[0] == 'for':
-        init = parse_line(' '.join(tokens[1:tokens.index(';')])) + ';'
-        condition = parse_bool_expr(' '.join(tokens[tokens.index(';') + 1:tokens.index('{')])) + ';'
-        update = parse_line(' '.join(tokens[tokens.index('{') + 1:-1])) + ';'
-        body = '\n'.join([parse_line(' '.join(tokens[tokens.index('{') + 1:-1]))])
-        return f"for {init}\n    if not {condition}:\n        break\n    {body}\n    {update}"
-    elif tokens[0] == 'if':
-        condition = parse_bool_expr(' '.join(tokens[1:tokens.index(')')]))
-        true_body = '\n'.join([parse_line(' '.join(tokens[tokens.index('{') + 1:tokens.index('}')]))])
-        false_body = '\n'.join([parse_line(' '.join(tokens[tokens.index('}') + 2:-1]))])
-        return f"if {condition}:\n    {true_body}\nelse:\n    {false_body}"
+    # Translate loops
+    code = re.sub(for_loop_pattern, lambda m: translate_for_loop(m), code)
+    code = re.sub(while_loop_pattern, lambda m: translate_while_loop(m), code)
+
+    # Translate if statements
+    code = re.sub(if_smt_pattern, lambda m: translate_if_smt(m), code)
+
+    # Translate output and input
+    code = re.sub(output_pattern, lambda m: translate_output(m), code)
+    code = re.sub(input_pattern, lambda m: translate_input(m), code)
+
+    # Translate expressions
+    code = re.sub(bool_expr_pattern, lambda m: translate_bool_expr(m), code)
+    code = re.sub(int_expr_pattern, lambda m: translate_int_expr(m), code)
+    code = re.sub(list_expr_pattern, lambda m: translate_list_expr(m), code)
+
+    return code
+
+
+def translate_assignment(match):
+    var_type, var_name, value = match.groups()
+    if var_type == 'x':
+        return f'{var_name} = {value}'
+    elif var_type == 'b':
+        return f'{var_name} = bool({value})'
+    elif var_type == 's':
+        return f'{var_name} = "{value}"'
+    elif var_type == 'l':
+        return f'{var_name} = [{value}]'
+
+
+def translate_for_loop(match):
+    init, condition, update, body = match.groups()
+    return f'for {init}; {condition}; {update}:\n{indent(translate_to_python(body), 4)}'
+
+
+def translate_while_loop(match):
+    condition, body = match.groups()
+    return f'while {condition}:\n{indent(translate_to_python(body), 4)}'
+
+
+def translate_if_smt(match):
+    condition, true_body, false_body = match.groups()
+    true_body = indent(translate_to_python(true_body), 4)
+    false_body = indent(translate_to_python(false_body), 4)
+    return f'if {condition}:\n{true_body}\nelse:\n{false_body}'
+
+
+def translate_output(match):
+    if match.group(1):
+        return f'print("{match.group(1)}")'
     else:
-        raise ValueError(f"Invalid token: {tokens[0]}")
+        return f'print({match.group(2)})'
 
-def parse_output_arg(arg):
-    if arg.startswith('"'):
-        return arg
+
+def translate_input(match):
+    var_name, prompt = match.groups()
+    return f'{var_name} = input("{prompt}")'
+
+
+def translate_bool_expr(match):
+    if match.group(1):
+        return str(bool(int(match.group(1))))
     else:
-        global global_vars
-        return f"global_vars['{arg}']"
+        left, op, right = match.groups()[1:]
+        left = translate_to_python(left)
+        right = translate_to_python(right)
+        return f'({left} {op} {right})'
 
-def parse_expr(var_type, tokens):
-    if '"' in tokens:
-        value = '"' + ' '.join(tokens[tokens.index('"') + 1:tokens.index('"', tokens.index('"') + 1)]) + '"'
-        if var_type == 'x':
-            raise ValueError("Cannot assign string to integer variable")
-        elif var_type == 'b':
-            raise ValueError("Cannot assign string to boolean variable")
-        return value
-    elif any(char.isdigit() for char in tokens[0]) or (tokens[0].startswith('-') and any(char.isdigit() for char in tokens[0][1:])):
-        value = tokens[0]
-        if var_type == 'b':
-            return 'True' if value != '0' else 'False'
-        return value
+
+def translate_int_expr(match):
+    if match.group(1):
+        return match.group(1)
     else:
-        global global_vars
-        return f"global_vars['{tokens[0]}']"
+        left, op, right = match.groups()[1:]
+        left = translate_to_python(left)
+        right = translate_to_python(right)
+        return f'({left} {op} {right})'
 
-def parse_bool_expr(expr):
-    tokens = expr.split()
-    expr = parse_expr('b', tokens)
-    while tokens and tokens[0] in ('<', '>', '=', '!', '='):
-        op = tokens.pop(0)
-        if op == '=':
-            op = '=='
-        elif op == '!=':
-            op = '!='
-        expr = f"{expr} {op} {parse_expr('b', tokens)}"
-    return expr
 
-# Example usage
-input_code = """
+def translate_list_expr(match):
+    values = match.group(1).split(',')
+    return f'[{", ".join(translate_to_python(v) for v in values)}]'
+
+
+def indent(code, spaces=4):
+    indent_str = ' ' * spaces
+    return indent_str + ('\n' + indent_str).join(code.split('\n'))
+
+
+def run_code(code):
+    exec(code)
+
+
+if __name__ == '__main__':
+    input_code = """
 xNum is 5
-out(xNum)
+out(Num)
 """
-parse_code(input_code)
-print(global_vars)
+    python_code = translate_to_python(input_code)
+    print(python_code)
+    run_code(python_code)
