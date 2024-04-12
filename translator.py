@@ -42,7 +42,7 @@ def translate_assignment(match):
     elif var_type == 'b':
         return f'{var_name} = bool({value})'
     elif var_type == 's':
-        return f'{var_name} = "{value}"'
+        return f'{var_name} = {value}'
     elif var_type == 'l':
         return f'{var_name} = [{value}]'
 
@@ -114,7 +114,12 @@ if __name__ == '__main__':
     input_code = """
 xNum is 5
 out(Num)
+sStr is "Hello"
+out(Str)
+bBool is 1
+out(Bool)
 """
     python_code = translate_to_python(input_code)
+    print(input_code)
     print(python_code)
     run_code(python_code)
