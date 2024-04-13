@@ -13,7 +13,7 @@ Date: SUBMISSION DATE
 
 ## Included files
 
-* File 1 - Description
+* translator.py - Description
 
 
 ## References
