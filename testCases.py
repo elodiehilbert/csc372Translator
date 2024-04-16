@@ -63,16 +63,18 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual(output, "8\n")
 
     # This throws error for addition until added
-    def test_add_two_numbers(self): 
+    def test_add_two_numbers_2(self): 
         input_code = """
         xNuma is 5
         xNumb is 3
-        out(Numa+Numb)
+        xNumc is xNuma + xNumb
+        out(Numc)
         """
         expected_python_code = """
         Numa = 5
         Numb = 3
-        print(Numa+Numb)
+        Numc = xNuma + xNumb
+        print(Numc)
         """
         self.assertEqual(translate_to_python(input_code), expected_python_code)
 
