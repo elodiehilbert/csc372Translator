@@ -6,8 +6,8 @@ def translate_to_python(code):
     # string_pattern = r'\"(.*?)\"'
     assignment_pattern = r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*(.+?)(?!\")'
     variable_pattern = r'\b(x|b|s|l)(\w+)'
-    for_loop_pattern = r'for\((.*?)\s*(.*?)\;\s*(.*?)\)\{(.*?)\}'
-    while_loop_pattern = r'while\((.*?)\)\{(.*?)\}'
+    for_loop_pattern = r'for\(([^;\n]*)\;([^;\n]*)\;([^;\n]*)\)\{([\s\S]*?)\}'
+    while_loop_pattern = r'while\((.*?)\)\{([\s\S]*?)\}'
     if_smt_pattern = r'if\((.*?)\)\s*then\s*\{(.*?)\}\s*else\s*\{(.*?)\}'
     output_pattern = r'out\("(.*?)"\)|out\((.*?)\)'
     input_pattern = r'(\w+)\s*is\s*in\("(.*?)"\)'
@@ -41,6 +41,15 @@ def translate_to_python(code):
 
     return code
 
+def translate_line_by_line(code):
+    split = code.split("\n")
+    output = ""
+    indent = 0
+    for line in split:
+        line = line.lstrip()
+        translated = translate_to_python(line)
+        output += translated + "\n"
+    return output
 
 def translate_assignment(match):
     var_type, var_name, value = match.groups()
