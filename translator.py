@@ -3,18 +3,25 @@ import re
 
 def translate_to_python(code):
     # Regex patterns
-    assignment_pattern = r'(x|b|s|l)\s*(\w+)\s*is\s*(.+)'
+    # string_pattern = r'\"(.*?)\"'
+    assignment_pattern = r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*(.+?)(?!\")'
+    variable_pattern = r'\b(x|b|s|l)(\w+)'
     for_loop_pattern = r'for\((.*?)\s*(.*?)\;\s*(.*?)\)\{(.*?)\}'
     while_loop_pattern = r'while\((.*?)\)\{(.*?)\}'
     if_smt_pattern = r'if\((.*?)\)\s*then\s*\{(.*?)\}\s*else\s*\{(.*?)\}'
     output_pattern = r'out\("(.*?)"\)|out\((.*?)\)'
     input_pattern = r'(\w+)\s*is\s*in\("(.*?)"\)'
-    bool_expr_pattern = r'(0|1)|(.*?)\s*(<=|>=|!=|<|>)\s*(.*?)'
-    int_expr_pattern = r'(\d+)|(.*?)\s*([-+*/])\s*(.*?)'
+    bool_expr_pattern = r'(?<![\w\d])\b(0|1)\b|(.*?)\s*(<=|>=|!=|<|>)\s*(.*?)\b(?![\w\d])'
+    int_expr_pattern = r'(?<![\w\d])\b(\d+)\b|(?!x|b|s|l)(.*?)\s*([-+*/])\s*(.*?)\b(?![\w\d])'
     list_expr_pattern = r'\[(.*?)\]'
+
+
 
     # Translate assignments
     code = re.sub(assignment_pattern, lambda m: translate_assignment(m), code)
+
+    # Translate variables
+    code = re.sub(variable_pattern, lambda m: translate_variable(m), code)
 
     # Translate loops
     code = re.sub(for_loop_pattern, lambda m: translate_for_loop(m), code)
@@ -45,6 +52,11 @@ def translate_assignment(match):
         return f'{var_name} = {value}'
     elif var_type == 'l':
         return f'{var_name} = [{value}]'
+
+
+def translate_variable(match):
+    var_type, var_name = match.groups()
+    return f'{var_name}'
 
 
 def translate_for_loop(match):
