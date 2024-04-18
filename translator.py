@@ -45,18 +45,18 @@ def translate_to_python(code):
 def translate_assignment(match):
     var_type, var_name, value = match.groups()
     if var_type == 'x':
-        return f'{var_name} = {value}'
+        return f'{var_type + var_name} = {value}'
     elif var_type == 'b':
-        return f'{var_name} = bool({value})'
+        return f'{var_type + var_name} = bool({value})'
     elif var_type == 's':
-        return f'{var_name} = {value}'
+        return f'{var_type + var_name} = {value}'
     elif var_type == 'l':
-        return f'{var_name} = [{value}]'
+        return f'{var_type + var_name} = [{value}]'
 
 
 def translate_variable(match):
     var_type, var_name = match.groups()
-    return f'{var_name}'
+    return f'{var_type+ var_name}'
 
 
 def translate_for_loop(match):
@@ -125,11 +125,11 @@ def run_code(code):
 if __name__ == '__main__':
     input_code = """
 xNum is 5
-out(Num)
+out(xNum)
 sStr is "Hello"
-out(Str)
+out(sStr)
 bBool is 1
-out(Bool)
+out(bBool)
 """
     python_code = translate_to_python(input_code)
     print(input_code)
