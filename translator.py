@@ -45,10 +45,18 @@ def translate_to_python(code):
 def translate_assignment(match):
     var_type, var_name, value = match.groups()
     if var_type == 'x':
+        try:
+            int(value)
+        except ValueError as e:
+            raise Exception("ERROR: x variable must be int.") from e
         return f'{var_type + var_name} = {value}'
     elif var_type == 'b':
+        if value != '0' and value != '1':
+            raise Exception("ERROR: b variable must be 0(False) or 1(True).")
         return f'{var_type + var_name} = bool({value})'
     elif var_type == 's':
+        if value != '"':
+            raise Exception("ERROR: s variable must be string.")
         return f'{var_type + var_name} = {value}'
     elif var_type == 'l':
         return f'{var_type + var_name} = [{value}]'
@@ -105,7 +113,7 @@ def translate_int_expr(match):
         left, op, right = match.groups()[1:]
         left = translate_to_python(left)
         right = translate_to_python(right)
-        return f'({left} {op} {right})'
+        return f'{left} {op} {right}'
 
 
 def translate_list_expr(match):
