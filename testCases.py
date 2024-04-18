@@ -7,31 +7,29 @@ class TestTranslator(unittest.TestCase):
     def test_translate_to_python(self):
         input_code = """
         xNum is 5
-        out(Num)
+        out(xNum)
         sStr is "Hello"
-        out(Str)
+        out(sStr)
         bBool is 1
-        out(Bool)
+        out(bBool)
         """
         expected_python_code = """
-        Num = 5
-        print(Num)
-        Str = "Hello"
-        print(Str)
-        Bool = bool(True)
-        print(Bool)
+        xNum = 5
+        print(xNum)
+        sStr = "Hello"
+        print(sStr)
+        bBool = bool(True)
+        print(bBool)
         """
         self.assertEqual(translate_to_python(input_code), expected_python_code)
 
     def test_run_code(self):
-        input_code = """
-        xNum is 5
-        out(Num)
-        sStr is "Hello"
-        out(Str)
-        bBool is 1
-        out(Bool)
-        """
+        input_code = """xNum is 5
+out(xNum)
+sStr is "Hello"
+out(sStr)
+bBool is 1
+out(bBool)"""
         python_code = translate_to_python(input_code)
         capturedOutput = io.StringIO()
         sys.stdout = capturedOutput
@@ -45,12 +43,12 @@ class TestTranslator(unittest.TestCase):
         input_code = """
         xNum1 is 5
         xNum2 is 3
-        out(Num1 + Num2)
+        out(xNum1 + xNum2)
         """
         expected_python_code = """
-        Num1 = 5
-        Num2 = 3
-        print(Num1 + Num2)
+        xNum1 = 5
+        xNum2 = 3
+        print(xNum1 + xNum2)
         """
         self.assertEqual(translate_to_python(input_code), expected_python_code)
 
@@ -68,13 +66,13 @@ class TestTranslator(unittest.TestCase):
         xNuma is 5
         xNumb is 3
         xNumc is xNuma + xNumb
-        out(Numc)
+        out(xNumc)
         """
         expected_python_code = """
-        Numa = 5
-        Numb = 3
-        Numc = xNuma + xNumb
-        print(Numc)
+        xNuma = 5
+        xNumb = 3
+        xNumc = xNuma + xNumb
+        print(xNumc)
         """
         self.assertEqual(translate_to_python(input_code), expected_python_code)
 
@@ -88,20 +86,20 @@ class TestTranslator(unittest.TestCase):
 
     def test_compare_two_numbers_pass(self):
         input_code = """
-        xN is 5
-        xNu is 3
-        if (N>Nu) then
-            out("N is greater than Nu")
+        xNuma is 5
+        xNumb is 3
+        if (xNuma>xNumb) then
+            out("a is greater than b")
         else
-            out("N is not greater than Nu")
+            out("a is not greater than b")
         """
         expected_python_code = """
-        N = 5
-        Nu = 3
-        if (N>Nu)
-            print("N is greater than Nu")
+        xNuma = 5
+        xNumb = 3
+        if (xNuma>xNumb)
+            print("a is greater than b")
         else
-            print("N is not greater than Nu")
+            print("a is not greater than b")
         """
         self.assertEqual(translate_to_python(input_code), expected_python_code)
 
@@ -111,24 +109,24 @@ class TestTranslator(unittest.TestCase):
         run_code(python_code)
         sys.stdout = sys.__stdout__
         output = capturedOutput.getvalue()
-        self.assertEqual(output, "N is greater than Nu\n")
+        self.assertEqual(output, "a is greater than b\n")
 
     def test_compare_two_numbers_fail(self):
         input_code = """
-        xN is 3
-        xNu is 5
-        if (N > Nu) then
-            out("N is greater than Nu")
+        xNuma is 3
+        xNumb is 5
+        if (xNuma > xNumb) then
+            out("a is greater than b")
         else
-            out("N is not greater than Nu")
+            out("a is not greater than b")
         """
         expected_python_code = """
-        N = 3
-        Nu = 5
-        if (N > Nu)
-            print("N is greater than Nu")
+        xNuma = 3
+        xNumb = 5
+        if (xNuma > xNumb)
+            print("a is greater than b")
         else
-            print("N is not greater than Nu")
+            print("a is not greater than b")
         """
         self.assertEqual(translate_to_python(input_code), expected_python_code)
 
@@ -138,7 +136,7 @@ class TestTranslator(unittest.TestCase):
         run_code(python_code)
         sys.stdout = sys.__stdout__
         output = capturedOutput.getvalue()
-        self.assertEqual(output, "N is not greater than Nu\n")
+        self.assertEqual(output, "a is not greater than b\n")
 
 if __name__ == '__main__':
     unittest.main()
