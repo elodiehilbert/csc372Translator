@@ -10,7 +10,7 @@ def translate_to_python(code):
     while_loop_pattern = r'while\s*\((.*?)\)\s*\{\s*([\s\S]*?)\s*\}'
     if_smt_pattern = r'if\s*\((.*?)\)\s*\{\s*([\s\S]*?)\s*\}(?:\s*else\s*\{\s*([\s\S]*?)\s*\})?'
     output_pattern = r'out\("(.*?)"\)|out\((.*?)\)'
-    input_pattern = r'(\w+)\s*is\s*in\("(.*?)"\)'
+    input_pattern = r'in\("(.*?)"\)'
     bool_expr_pattern = r'(?<![\w\d])\b([a-zA-Z0-9_]+)\b\s*(<=|>=|!=|<|>)\s*([a-zA-Z0-9_]+)\b(?![\w\d])'
     int_expr_pattern = r'(?<![\w\d])\b(\d+)\b|(?!x|b|s|l)(.*?)\s*([-+*/])\s*(.*?)\b(?![\w\d])'
     list_expr_pattern = r'\[(.*?)\]'
@@ -89,8 +89,8 @@ def translate_output(match):
 
 
 def translate_input(match):
-    var_name, prompt = match.groups()
-    return f'{var_name} = input("{prompt}")'
+    prompt = match.group(1)
+    return f'input("{prompt}")'
 
 
 def translate_bool_expr(match):
