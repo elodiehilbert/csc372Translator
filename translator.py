@@ -4,7 +4,7 @@ import re
 def translate_to_python(code):
     # Regex patterns
     # string_pattern = r'\"(.*?)\"'
-    assignment_pattern =  r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*(.+?)(?!\")'
+    assignment_pattern =  r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*([^;]+)(?!\")'
     variable_pattern = r'\b(x|b|s|l)(\w+)'
     for_loop_pattern = r'for\s*\((.*?)\)\s*\{\s*([\s\S]*?)\s*\}'
     while_loop_pattern = r'while\s*\((.*?)\)\s*\{\s*([\s\S]*?)\s*\}'

@@ -2,6 +2,7 @@ xNum1 is in("Give me an integer")
 xNum2 is in("Give me another integer")
 xNumM is in("Give me a third integer")
 
+
 for (xVal is xNum1; xVal < xNum2 + 1; xVal += 1) {
     out("*" * xVal)
 }
