@@ -1,0 +1,34 @@
+xNum1 is in("Give me an integer")
+xNum2 is in("Give me another integer")
+
+if (xNum1 > xNum2) {
+    out("Max =", xNum1)
+} else {
+    out("Max =", xNum2)
+}
+
+out("Sum =", xNum1 + xNum2)
+
+if (xNum1 > xNum2) {
+    out("Difference =", xNum1 - xNum2)
+} else {
+    out("Difference =", xNum2 - xNum1)
+}
+
+out("Product =", xNum1 * xNum2)
+
+if (xNum1 > xNum2) {
+    xMin is xNum2
+} else {
+    xMin is xNum1
+}
+
+for (xVal = 1; xVal <= xMin - 1; xVal+= 1) {
+    if ((xNum1 % xVal == 0) and (xNum2 % xVal == 0)) {
+        xGCD is xVal
+    }
+}
+
+out("GCD =", xGCD)
+
+out("LCM =", xNum1 / xGCD * xNum2)

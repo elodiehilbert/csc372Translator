@@ -1,0 +1,16 @@
+xNum1 is in("Give me an integer")
+xNum2 is in("Give me another integer")
+xNumM is in("Give me a third integer")
+
+for (xVal is xNum1; xVal < xNum2 + 1; xVal += 1) {
+    out("*" * xVal)
+}
+
+xMSum is 0
+for (xNum is 1; xNum < xNumM; xNum += 1) {
+    if (xNum % xNum1 == 0 or xNum % xNum2 == 0) {
+        xMSum += xNum
+    }
+}
+
+out(xMSum)
