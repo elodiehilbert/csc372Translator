@@ -4,14 +4,14 @@ import re
 def translate_to_python(code):
     # Regex patterns
     # string_pattern = r'\"(.*?)\"'
-    assignment_pattern = r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*(.+?)(?!\")'
+    assignment_pattern =  r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*(.+?)(?!\")'
     variable_pattern = r'\b(x|b|s|l)(\w+)'
-    for_loop_pattern = r'for\(([^;\n]*)\;([^;\n]*)\;([^;\n]*)\)\{([\s\S]*?)\}'
-    while_loop_pattern = r'while\((.*?)\)\{([\s\S]*?)\}'
-    if_smt_pattern = r'if\((.*?)\)\s*then\s*\{(.*?)\}\s*else\s*\{(.*?)\}'
+    for_loop_pattern = r'for\s*\((.*?)\)\s*\{\s*([\s\S]*?)\s*\}'
+    while_loop_pattern = r'while\s*\((.*?)\)\s*\{\s*([\s\S]*?)\s*\}'
+    if_smt_pattern = r'if\s*\((.*?)\)\s*\{\s*([\s\S]*?)\s*\}(?:\s*else\s*\{\s*([\s\S]*?)\s*\})?'
     output_pattern = r'out\("(.*?)"\)|out\((.*?)\)'
     input_pattern = r'(\w+)\s*is\s*in\("(.*?)"\)'
-    bool_expr_pattern = r'(?<![\w\d])\b(0|1)\b|(.*?)\s*(<=|>=|!=|<|>)\s*(.*?)\b(?![\w\d])'
+    bool_expr_pattern = r'(?<![\w\d])\b([a-zA-Z0-9_]+)\b\s*(<=|>=|!=|<|>)\s*([a-zA-Z0-9_]+)\b(?![\w\d])'
     int_expr_pattern = r'(?<![\w\d])\b(\d+)\b|(?!x|b|s|l)(.*?)\s*([-+*/])\s*(.*?)\b(?![\w\d])'
     list_expr_pattern = r'\[(.*?)\]'
 
@@ -41,31 +41,19 @@ def translate_to_python(code):
 
     return code
 
-def translate_line_by_line(code):
-    split = code.split("\n")
-    output = ""
-    indent = 0
-    for line in split:
-        line = line.lstrip()
-        translated = translate_to_python(line)
-        output += translated + "\n"
-    return output
 
 def translate_assignment(match):
     var_type, var_name, value = match.groups()
     if var_type == 'x':
-        try:
-            int(value)
-        except ValueError as e:
-            raise Exception("ERROR: x variable must be int.") from e
         return f'{var_type + var_name} = {value}'
     elif var_type == 'b':
-        if value != '0' and value != '1':
-            raise Exception("ERROR: b variable must be 0(False) or 1(True).")
-        return f'{var_type + var_name} = bool({value})'
+        if value == "1":
+            return f'{var_type + var_name} = bool(True)'
+        elif value == "0":
+            return f'{var_type + var_name} = bool(False)'
+        else:
+            return f'{var_type + var_name} = bool({value})'
     elif var_type == 's':
-        if value != '"':
-            raise Exception("ERROR: s variable must be string.")
         return f'{var_type + var_name} = {value}'
     elif var_type == 'l':
         return f'{var_type + var_name} = [{value}]'
@@ -77,8 +65,8 @@ def translate_variable(match):
 
 
 def translate_for_loop(match):
-    init, condition, update, body = match.groups()
-    return f'for {init}; {condition}; {update}:\n{indent(translate_to_python(body), 4)}'
+    condition, body = match.groups()
+    return f'for {condition}:\n{indent(translate_to_python(body), 4)}'
 
 
 def translate_while_loop(match):
@@ -107,12 +95,12 @@ def translate_input(match):
 
 def translate_bool_expr(match):
     if match.group(1):
-        return str(bool(int(match.group(1))))
+        return str(match.group())
     else:
         left, op, right = match.groups()[1:]
         left = translate_to_python(left)
         right = translate_to_python(right)
-        return f'({left} {op} {right})'
+        return f'{left} {op} {right}'
 
 
 def translate_int_expr(match):
