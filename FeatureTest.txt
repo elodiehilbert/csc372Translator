@@ -1,0 +1,55 @@
+xNum is 5
+out(xNum + 5)
+out(xNum - 2)
+out(xNum * 3)
+out(xNum / 5)
+out(12 % 5)
+out(1 or 0)
+out(1 and 1)
+out(1 < 5 and not 1)
+out(5 > 3)
+out(3 >= 3)
+
+bVal is 1 or 0
+out(bVal)
+
+sThing is "Hello"
+out(sThing)
+
+if(5 > 3){
+    out(5)
+}
+
+if(5 < 4){
+    out("No")
+} else{
+    out("yesy")
+}
+
+for(xJ is 0; xJ < 3; xJ += 1){
+    for(xI is 0; xI < 3; xI += 1){
+        out(xJ + xI)
+    }
+}
+
+sInput = in("Say Something: ")
+out(sInput)
+
+fMultiply(xa, xb){
+    return xa * xb
+}
+
+out(fMultiply(5, 3))
+
+fAdd xa xb{
+    return xa + xb
+}
+
+fAddFiveNums xa xb xc xd xe{
+    return xa + xb + xc + xd +xe
+}
+
+fAddThree = fAdd 3
+
+out(fAddThree 20)
+out(fAdd 10 20)

@@ -3,7 +3,6 @@ import random
 import string
 import re
 
-
 assignment_pattern =  r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*([^;]+)(?!\")'
 variable_pattern = r'\b(x|b|s|l)(\w+)'
 for_loop_pattern = r'for\s*\(\s*(.*)\;\s*(.*)\;\s*(.*)\)\s*\{'
@@ -16,10 +15,6 @@ function_pattern = r'\s*(f\w+)\s*(\(.*\)){'
 curry_pattern = r'\s*(f\w+)\s*(.*)\s*{'
 curry_call = r'(f\w+)\s*([\w ]*)'
 
-bool_expr_pattern = r'(?<![\w\d])\b([a-zA-Z0-9_]+)\b\s*(<=|>=|!=|<|>)\s*([a-zA-Z0-9_]+)\b(?![\w\d])'
-int_expr_pattern = r'(?<![\w\d])\b(\d+)\b|(?!x|b|s|l)(.*?)\s*([-+*/])\s*(.*?)\b(?![\w\d])'
-list_expr_pattern = r'\[(.*?)\]'
-
 def translate_line_by_line(code):
         lines = code.split("\n")
         indent = 0
@@ -30,22 +25,19 @@ def translate_line_by_line(code):
                 # Remove indents if it is ending an indented block thing
                 if line.find("}") != -1:
                         line = line.replace("}", "")
-                        if(len(endings) > 0):
-                                if extra > 0:
-                                        for j in range(extra):
-                                                indent -= 1
-                                                index = len(endings) - 1
-                                                output += ("\t" * indent) + endings[index] + "\n"
-                                                endings.remove(endings[index])
-                                        extra = 0
+                        if extra > 0:
+                                for j in range(extra):
                                         indent -= 1
-                                else:
                                         index = len(endings) - 1
                                         output += ("\t" * indent) + endings[index] + "\n"
                                         endings.remove(endings[index])
-                                        indent -= 1
+                                extra = 0
+                                indent -= 1
                         else:
-                             indent -= 1
+                                index = len(endings) - 1
+                                output += ("\t" * indent) + endings[index] + "\n"
+                                endings.remove(endings[index])
+                                indent -= 1
                 
 
                 output += "\t" * indent
@@ -60,11 +52,6 @@ def translate_line_by_line(code):
                 line = re.sub(output_pattern, lambda m: translate_output(m), line)
                 line = re.sub(input_pattern, lambda m: translate_input(m), line)
 
-                # # Translate expressions
-                # line = re.sub(bool_expr_pattern, lambda m: translate_bool_expr(m), line)
-                # line = re.sub(int_expr_pattern, lambda m: translate_int_expr(m), line)
-                # line = re.sub(list_expr_pattern, lambda m: translate_list_expr(m), line)
-
                 # Translate loops
                 if(re.search(while_loop_pattern, line)):
                         line = re.sub(while_loop_pattern, lambda m: translate_while_loop(m), line)
@@ -72,7 +59,7 @@ def translate_line_by_line(code):
                         indent += 1
 
                 if(re.search(for_loop_pattern, line)):
-                        init, condition, every = re.match(for_loop_pattern, line).groups()
+                        init, condition, every = re.search(for_loop_pattern, line).groups()
                         real_line = init + "\n" + ("\t" * indent)
                         real_line += "while " + condition + ":"
                         line = real_line
@@ -99,7 +86,7 @@ def translate_line_by_line(code):
 
                 # Translate curry function heads
                 if(re.search(curry_pattern, line)):
-                        name, args = re.match(curry_pattern, line).groups()
+                        name, args = re.search(curry_pattern, line).groups()
                         args = args.split()
                         real_line = "\t" * indent
                         real_line += f'def {name}({args[0]}):'
@@ -142,12 +129,6 @@ def translate_assignment(match):
 def translate_variable(match):
     var_type, var_name = match.groups()
     return f'{var_type+ var_name}'
-
-
-def translate_for_loop(match):
-    init, condition, every = match.groups()
-    return f'for {condition}:\n{indent(translate_to_python(body), 4)}'
-
 
 def translate_while_loop(match):
     condition = match.group(1)
