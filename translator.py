@@ -12,8 +12,8 @@ if_smt_pattern = r'if\s*\((.*?)\)\s*\{\s*'
 else_smt_pattern = r'else\s*\{'
 output_pattern = r'out\("(.*?)"\)|out\((.*?)\)'
 input_pattern = r'in\("(.*?)"\)'
-function_pattern = r'\s*(f\w+)\s*(\(.*\)){'
-curry_pattern = r'\s*(f\w+)\s*(.*)\s*{'
+function_pattern = r'\s*(f\w+)\s*(\(.*\))\s*{'
+curry_pattern = r'^\s*(f\w+)\s*([^()]*)\s'
 curry_call = r'(f\w+)\s*([\w ]*)'
 
 def translate_line_by_line(code):
@@ -26,7 +26,7 @@ def translate_line_by_line(code):
                 # Remove indents if it is ending an indented block thing
                 if line.find("}") != -1:
                         line = line.replace("}", "")
-                        if extra > 0:
+                        if extra > 0 and endings[len(endings) - 1] != "":
                                 for j in range(extra):
                                         indent -= 1
                                         index = len(endings) - 1
@@ -35,6 +35,7 @@ def translate_line_by_line(code):
                                 extra = 0
                                 indent -= 1
                         else:
+                                print(len(endings))
                                 index = len(endings) - 1
                                 output += ("\t" * indent) + endings[index] + "\n"
                                 endings.remove(endings[index])
@@ -97,19 +98,20 @@ def translate_line_by_line(code):
                         name, args = re.search(curry_pattern, line).groups()
                         args = args.split()
                         real_line = "\t" * indent
-                        if len(args) == 0:
-                            real_line += f'def {name}():'
-                        else:
-                             real_line += f'def {name}({args[0]}):'
                         indent += 1
-                        
-                        for j in range(1, len(args)):
-                                real_line += '\n' + ("\t" * indent)
-                                fname = ''.join(random.choices(string.ascii_letters, k = 10))
-                                real_line += f'def {fname}({args[j]}):'
-                                endings.append(f'return {fname}')
-                                extra += 1
-                                indent += 1
+                        if(len(args) == 0):
+                            real_line += f'def {name}():'
+                            endings.append("")
+                        else:
+                            real_line += f'def {name}({args[0]}):'
+                            
+                            for j in range(1, len(args)):
+                                    real_line += '\n' + ("\t" * indent)
+                                    fname = ''.join(random.choices(string.ascii_letters, k = 10))
+                                    real_line += f'def {fname}({args[j]}):'
+                                    endings.append(f'return {fname}')
+                                    extra += 1
+                                    indent += 1
                         line = real_line
 
                 # Translate curry function calls
@@ -117,10 +119,11 @@ def translate_line_by_line(code):
                         line = re.sub(curry_call, lambda m: translate_curry_call(m), line)
 
                 line = line.lstrip()
+                print(line)
                 output += line + "\n"
 
-        if(indent != 0):
-             raise SyntaxError("Unclosed Brackets")
+        # if(indent != 0):
+        #      raise SyntaxError("Unclosed Brackets")
         return output
 
 def translate_assignment(match):
