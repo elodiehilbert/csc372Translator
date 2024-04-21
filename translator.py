@@ -38,17 +38,20 @@ def translate_line_by_line(code):
                                 index = len(endings) - 1
                                 output += ("\t" * indent) + endings[index] + "\n"
                                 endings.remove(endings[index])
-                                indent -= 1
-                
+                                indent -= 1                
 
                 output += "\t" * indent
         
-                # Translate assignments
-                line = re.sub(assignment_pattern, lambda m: translate_assignment(m), line)
+                # Check for unclosed string
+                if (line.count("\"") - line.count("\\\"")) % 2 != 0:
+                     raise SyntaxError("Unclosed string at\n" + line)
 
                 # Catch invalid assignments:
                 if(re.match(invalid_assignment_pattern, line)):
-                     raise SyntaxError("Invalid variable assignment, use 'is' instead of '='")
+                     raise SyntaxError("Invalid variable assignment, use 'is' instead of '=' at\n" + line)
+
+                # Translate assignments
+                line = re.sub(assignment_pattern, lambda m: translate_assignment(m), line)
 
                 # Translate variables
                 line = re.sub(variable_pattern, lambda m: translate_variable(m), line)
