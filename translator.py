@@ -4,6 +4,7 @@ import string
 import re
 
 assignment_pattern =  r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*([^;]+)(?!\")'
+invalid_assignment_pattern = r'(?<!\")\s*\b(x|b|s|l)\s*(\w+)\s*=\s*([^;]+)(?!\")'
 variable_pattern = r'\b(x|b|s|l)(\w+)'
 for_loop_pattern = r'for\s*\(\s*(.*)\;\s*(.*)\;\s*(.*)\)\s*\{'
 while_loop_pattern = r'while\s*\((.*?)\)\s*\{\s*'
@@ -44,6 +45,10 @@ def translate_line_by_line(code):
         
                 # Translate assignments
                 line = re.sub(assignment_pattern, lambda m: translate_assignment(m), line)
+
+                # Catch invalid assignments:
+                if(re.match(invalid_assignment_pattern, line)):
+                     raise SyntaxError("Invalid variable assignment, use 'is' instead of '='")
 
                 # Translate variables
                 line = re.sub(variable_pattern, lambda m: translate_variable(m), line)
@@ -107,7 +112,7 @@ def translate_line_by_line(code):
 
                 line = line.lstrip()
                 output += line + "\n"
-                
+
         if(indent != 0):
              raise SyntaxError("Unclosed Brackets")
         return output
