@@ -121,8 +121,6 @@ def translate_assignment(match):
             raise Exception("ERROR: x variable must be int.") from e
         return f'{var_type + var_name} = int({value})'
     elif var_type == 'b':
-        if value != '0' and value != '1':
-            raise Exception("ERROR: b variable must be 0(False) or 1(True).")
         if value == "1":
             return f'{var_type + var_name} = bool(True)'
         elif value == "0":
@@ -130,7 +128,7 @@ def translate_assignment(match):
         else:
             return f'{var_type + var_name} = bool({value})'
     elif var_type == 's':
-        if value != '"':
+        if type(value) != str:
             raise Exception("ERROR: s variable must be string.")
         return f'{var_type + var_name} = {value}'
     elif var_type == 'l':
