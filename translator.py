@@ -40,6 +40,7 @@ def translate_line_by_line(code):
                                 endings.remove(endings[index])
                                 indent -= 1                
 
+                # Add indents to start of line
                 output += "\t" * indent
         
                 # Check for unclosed string
@@ -60,12 +61,13 @@ def translate_line_by_line(code):
                 line = re.sub(output_pattern, lambda m: translate_output(m), line)
                 line = re.sub(input_pattern, lambda m: translate_input(m), line)
 
-                # Translate loops
+                # Translate while loops
                 if(re.search(while_loop_pattern, line)):
                         line = re.sub(while_loop_pattern, lambda m: translate_while_loop(m), line)
                         endings.append("")
                         indent += 1
 
+                # Translate for loop
                 if(re.search(for_loop_pattern, line)):
                         init, condition, every = re.search(for_loop_pattern, line).groups()
                         real_line = init + "\n" + ("\t" * indent)
@@ -120,8 +122,9 @@ def translate_line_by_line(code):
                 line = line.lstrip()
                 output += line + "\n"
 
-        # if(indent != 0):
-        #      raise SyntaxError("Unclosed Brackets")
+        # Check for unclosed brackets
+        if(indent != 0):
+             raise SyntaxError("Unclosed Brackets")
         return output
 
 def translate_assignment(match):
@@ -157,7 +160,6 @@ def translate_while_loop(match):
     condition = match.group(1)
     return f'while {condition}:'
 
-
 def translate_if_smt(match):
     condition = match.group(1)
     return f'if {condition}:'
@@ -171,7 +173,6 @@ def translate_output(match):
     else:
         return f'print({match.group(2)})'
 
-
 def translate_input(match):
     prompt = match.group(1)
     return f'input("{prompt}")'
@@ -184,81 +185,6 @@ def translate_curry_call(match):
               output+= f'({arg})'
         return output
 
-
-def translate_bool_expr(match):
-    if match.group(1):
-        return str(match.group())
-    else:
-        left, op, right = match.groups()[1:]
-        left = translate_to_python(left)
-        right = translate_to_python(right)
-        return f'{left} {op} {right}'
-
-
-def translate_int_expr(match):
-    print(match.groups())
-    if match.group(1):
-        return match.group(1)
-    else:
-        left, op, right = match.groups()[1:]
-        left = translate_to_python(left)
-        right = translate_to_python(right)
-        return f'{left} {op} {right}'
-
 def translate_function_head(match):
      name, args = match.groups()
      return f'def {name}{args}:'
-
-def translate_list_expr(match):
-    values = match.group(1).split(',')
-    return f'[{", ".join(translate_to_python(v) for v in values)}]'
-
-def indent(code, spaces=4):
-    indent_str = ' ' * spaces
-    return indent_str + ('\n' + indent_str).join(code.split('\n'))
-
-# input_code = """
-# xNum is 5
-# out(xNum)
-# sStr is "Hello"
-# out(sStr)
-# bBool is 1
-
-# while(xNum < 10){
-#         xNum += 1
-# }
-        
-# if(xNum == 10){
-#         out(5)
-# } else{
-#         out(10)
-# }
-# out(bBool)
-
-# for(xVal = 0; xVal < 5; xVal += 1){
-#         out(xVal)
-# }
-# fMultiply a b {
-#         return a * b
-# }
-
-# out(fMultiply 5 2)
-
-# fMult5 = fMultiply 5
-# out(fMult5 10)
-
-# sInput is in("Test")
-# out(sInput)
-
-# """
-# expected_python_code = """
-# xNum = 5
-# print(xNum)
-# sStr = "Hello"
-# print(sStr)
-# bBool = bool(1)
-# print(bBool)
-# """
-
-# print(translate_line_by_line(input_code))
-# exec(translate_line_by_line(input_code))
