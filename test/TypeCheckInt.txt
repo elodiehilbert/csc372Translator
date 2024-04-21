@@ -1,0 +1,2 @@
+xNum is "Hello"
+out(xNum)

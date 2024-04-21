@@ -1,0 +1,2 @@
+sStr is 5
+out(sStr)
