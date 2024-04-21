@@ -1,0 +1,2 @@
+bBool is "Hello"
+out(bBool)
