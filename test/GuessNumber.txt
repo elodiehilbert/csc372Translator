@@ -1,0 +1,14 @@
+xNum is in("Give me a secret number: ")
+
+xGuess is in("Guess: ")
+
+while (xGuess != xNum) {
+    if (xGuess > xNum) {
+        out("Too high")
+    } else {
+        out("Too low")
+    }
+    xGuess is in("Guess: ")
+}
+
+out("Correct!")

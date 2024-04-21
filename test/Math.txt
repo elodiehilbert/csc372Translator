@@ -1,0 +1,63 @@
+fAdd xa xb {
+    return xa + xb
+}
+
+fMultiply(xa, xb) {
+    return xa * xb
+}
+
+fDivide xa xb {
+    if (xa > xb) {
+        xMax is xa
+        xMin is xb
+    } else {
+        xMax is xb
+        xMin is xa
+    }
+    return xMax / xMin
+}
+
+fMod(xa, xb) {
+    if (xa > xb) {
+        xMax is xa
+        xMin is xb
+    } else {
+        xMax is xb
+        xMin is xa
+    }
+    return xMax % xMin
+}
+
+fSubtract xa, xb {
+    if (xa > xb) {
+        xMax is xa
+        xMin is xb
+    } else {
+        xMax is xb
+        xMin is xa
+    }
+    return xMax - xMin
+}
+
+fMain {
+    xa is in("Give me a number: ")
+    xb is in("Give me another number: ")
+    sDo is in ("What would you like to do?")
+    if (sDo == "Add") {
+        out(fAdd xa xb)
+    }
+    if (sDo == "Subtract") {
+        out(fSubtract xa xb)
+    }
+    if (sDo == "Multiply") {
+        out(fMultiply(xa, xb))
+    }
+    if (sDo == "Divide") {
+        out(fDivide xa xb)
+    }
+    if (sDo == "Modulus") {
+        out(fMod(xa, xb))
+    }
+}
+
+fMain
