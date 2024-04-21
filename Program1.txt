@@ -1,5 +1,5 @@
-xNum1 is in("Give me an integer")
-xNum2 is in("Give me another integer")
+xNum1 is in("Give me an integer: ")
+xNum2 is in("Give me another integer: ")
 
 
 if (xNum1 > xNum2) {
