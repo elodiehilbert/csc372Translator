@@ -1,0 +1,4 @@
+sString is in("Give me a word: ")
+out(sString)
+sString is "Cool word!"
+out(sString)

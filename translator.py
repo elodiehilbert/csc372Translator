@@ -123,10 +123,11 @@ def translate_line_by_line(code):
 def translate_assignment(match):
     var_type, var_name, value = match.groups()
     if var_type == 'x':
-        try:
-            int(value)
-        except ValueError as e:
-            raise Exception("ERROR: x variable must be int.") from e
+        if re.match(r'in\(.*\)|x\w+', value) == None:   
+            try:
+                int(value)
+            except ValueError as e:
+                raise Exception("ERROR: x variable must be int.") from e
         return f'{var_type + var_name} = int({value})'
     elif var_type == 'b':
         if value == "1":
@@ -136,8 +137,9 @@ def translate_assignment(match):
         else:
             return f'{var_type + var_name} = bool({value})'
     elif var_type == 's':
-        if type(value) != str:
-            raise Exception("ERROR: s variable must be string.")
+        if re.match(r'in\(.*\)|s\w+', value) == None:
+            if type(value) != str:
+                raise Exception("ERROR: s variable must be string.")
         return f'{var_type + var_name} = {value}'
     elif var_type == 'l':
         return f'{var_type + var_name} = [{value}]'
