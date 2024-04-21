@@ -2,7 +2,7 @@ import random
 import string
 import re
 
-assignment_pattern =  r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*([^;]+)(?!\")'
+assignment_pattern =  r'(?<!\")\b(x|b|s|l|f)\s*(\w+)\s*is\s*([^;]+)(?!\")'
 invalid_assignment_pattern = r'(?<!\")\s*\b(x|b|s|l)\s*(\w+)\s*=\s*([^;]+)(?!\")'
 variable_pattern = r'\b(x|b|s|l)(\w+)'
 for_loop_pattern = r'for\s*\(\s*(.*)\;\s*(.*)\;\s*(.*)\)\s*\{'
@@ -148,8 +148,8 @@ def translate_assignment(match):
         if re.match(r'in\(.*\)|s\w+|"[^"]*"', value) == None:
             raise Exception("ERROR: s variable must be string.")
         return f'{var_type + var_name} = {value}'
-    elif var_type == 'l':
-        return f'{var_type + var_name} = [{value}]'
+    elif var_type == 'f':
+        return f'{var_type + var_name} = {value}'
 
 def translate_variable(match):
     var_type, var_name = match.groups()

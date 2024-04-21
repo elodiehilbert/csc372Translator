@@ -49,7 +49,7 @@ fAddFiveNums xa xb xc xd xe{
     return xa + xb + xc + xd +xe
 }
 
-fAddThree = fAdd 3
+fAddThree is fAdd 3
 
 out(fAddThree 20)
 out(fAdd 10 20)

@@ -50,24 +50,25 @@ def fMultiply(xa, xb):
 print(fMultiply(5, 3))
 
 def fAdd(xa):
-	def bGRXLWONCE(xb):
+	def lmiSineBuF(xb):
 		return xa + xb
-	return bGRXLWONCE
+	return lmiSineBuF
 
 
 def fAddFiveNums(xa):
-	def kLiByzAKkb(xb):
-		def NsMVGcYCuZ(xc):
-			def VUFIwcjOkr(xd):
-				def iwoGdqpZoY(xe):
+	def LWIIlRHJrY(xb):
+		def wYyijgVFex(xc):
+			def IRmqaNtBCo(xd):
+				def YUscfyaKWU(xe):
 					return xa + xb + xc + xd +xe
-				return iwoGdqpZoY
-			return VUFIwcjOkr
-		return NsMVGcYCuZ
-	return kLiByzAKkb
+				return YUscfyaKWU
+			return IRmqaNtBCo
+		return wYyijgVFex
+	return LWIIlRHJrY
 
 
 fAddThree= fAdd(3)
 
 print(fAddThree(20))
 print(fAdd(10)(20))
+
