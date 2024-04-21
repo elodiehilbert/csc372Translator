@@ -136,6 +136,8 @@ def translate_assignment(match):
                 raise Exception("ERROR: x variable must be int.") from e
         return f'{var_type + var_name} = int({value})'
     elif var_type == 'b':
+        if re.match(r'in\(.*\)|s\w+|"[^"]*"', value) != None:
+            raise Exception("ERROR: b variable must be boolean.")
         if value == "1":
             return f'{var_type + var_name} = bool(True)'
         elif value == "0":
