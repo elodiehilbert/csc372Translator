@@ -42,7 +42,7 @@ fSubtract xa, xb {
 fMain {
     xa is in("Give me a number: ")
     xb is in("Give me another number: ")
-    sDo is in ("What would you like to do?")
+    sDo is in("What would you like to do?")
     if (sDo == "Add") {
         out(fAdd xa xb)
     }
@@ -60,4 +60,4 @@ fMain {
     }
 }
 
-fMain
+fMain()

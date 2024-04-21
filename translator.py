@@ -13,7 +13,7 @@ else_smt_pattern = r'else\s*\{'
 output_pattern = r'out\("(.*?)"\)|out\((.*?)\)'
 input_pattern = r'in\("(.*?)"\)'
 function_pattern = r'\s*(f\w+)\s*(\(.*\))\s*{'
-curry_pattern = r'^\s*(f\w+)\s*([^()]*)\s'
+curry_pattern = r'^\s*(f\w+)\s*([^(){]*)\s*{'
 curry_call = r'(f\w+)\s*([\w ]*)'
 
 def translate_line_by_line(code):
@@ -35,7 +35,6 @@ def translate_line_by_line(code):
                                 extra = 0
                                 indent -= 1
                         else:
-                                print(len(endings))
                                 index = len(endings) - 1
                                 output += ("\t" * indent) + endings[index] + "\n"
                                 endings.remove(endings[index])
@@ -119,7 +118,6 @@ def translate_line_by_line(code):
                         line = re.sub(curry_call, lambda m: translate_curry_call(m), line)
 
                 line = line.lstrip()
-                print(line)
                 output += line + "\n"
 
         # if(indent != 0):

@@ -32,7 +32,7 @@ for(xJ is 0; xJ < 3; xJ += 1){
     }
 }
 
-sInput = in("Say Something: ")
+sInput is in("Say Something: ")
 out(sInput)
 
 fMultiply(xa, xb){
