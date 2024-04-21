@@ -121,8 +121,14 @@ def translate_line_by_line(code):
 def translate_assignment(match):
     var_type, var_name, value = match.groups()
     if var_type == 'x':
+        try:
+            int(value)
+        except ValueError as e:
+            raise Exception("ERROR: x variable must be int.") from e
         return f'{var_type + var_name} = int({value})'
     elif var_type == 'b':
+        if value != '0' and value != '1':
+            raise Exception("ERROR: b variable must be 0(False) or 1(True).")
         if value == "1":
             return f'{var_type + var_name} = bool(True)'
         elif value == "0":
@@ -130,6 +136,8 @@ def translate_assignment(match):
         else:
             return f'{var_type + var_name} = bool({value})'
     elif var_type == 's':
+        if value != '"':
+            raise Exception("ERROR: s variable must be string.")
         return f'{var_type + var_name} = {value}'
     elif var_type == 'l':
         return f'{var_type + var_name} = [{value}]'
