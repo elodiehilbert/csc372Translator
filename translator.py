@@ -141,9 +141,8 @@ def translate_assignment(match):
         else:
             return f'{var_type + var_name} = bool({value})'
     elif var_type == 's':
-        if re.match(r'in\(.*\)|s\w+', value) == None:
-            if type(value) != str:
-                raise Exception("ERROR: s variable must be string.")
+        if re.match(r'in\(.*\)|s\w+|"[^"]*"', value) == None:
+            raise Exception("ERROR: s variable must be string.")
         return f'{var_type + var_name} = {value}'
     elif var_type == 'l':
         return f'{var_type + var_name} = [{value}]'
