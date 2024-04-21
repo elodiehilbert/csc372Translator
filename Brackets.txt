@@ -1,0 +1,4 @@
+xJ is 5
+while(xJ < 10){
+    out(xJ)
+    xJ += 1

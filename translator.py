@@ -107,7 +107,9 @@ def translate_line_by_line(code):
 
                 line = line.lstrip()
                 output += line + "\n"
-
+                
+        if(indent != 0):
+             raise SyntaxError("Unclosed Brackets")
         return output
 
 def translate_assignment(match):
