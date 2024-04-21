@@ -8,10 +8,10 @@ def translate_to_python(code):
     variable_pattern = r'\b(x|b|s|l)(\w+)'
     for_loop_pattern = r'for\((.*?)\s*(.*?)\;\s*(.*?)\)\{(.*?)\}'
     while_loop_pattern = r'while\((.*?)\)\{(.*?)\}'
-    if_smt_pattern = r'if\((.*?)\)\s*then\s*\{(.*?)\}\s*else\s*\{(.*?)\}'
+    if_smt_pattern = r'if\s*\((.*?)\)\s*\{\s*([\s\S]*?)\s*\}(?:\s*else\s*\{\s*([\s\S]*?)\s*\})?'
     output_pattern = r'out\("(.*?)"\)|out\((.*?)\)'
     input_pattern = r'(\w+)\s*is\s*in\("(.*?)"\)'
-    bool_expr_pattern = r'(?<![\w\d])\b(0|1)\b|(.*?)\s*(<=|>=|!=|<|>)\s*(.*?)\b(?![\w\d])'
+    bool_expr_pattern = r'if\s*\((.*?)\)\s*then\s*\{\s*(.*?)\s*\}(?:\s*else\s*\{\s*(.*?)\s*\})?' #if\s*\((.*?)\)\s*then\s*\{\s*(.*?)\s*\}(?:\s*else\s*\{\s*(.*?)\s*\})?
     int_expr_pattern = r'(?<![\w\d])\b(\d+)\b|(?!x|b|s|l)(.*?)\s*([-+*/])\s*(.*?)\b(?![\w\d])'
     list_expr_pattern = r'\[(.*?)\]'
 
@@ -90,12 +90,12 @@ def translate_input(match):
 
 def translate_bool_expr(match):
     if match.group(1):
-        return str(bool(int(match.group(1))))
+        return str(bool(match.group(1)))
     else:
         left, op, right = match.groups()[1:]
         left = translate_to_python(left)
         right = translate_to_python(right)
-        return f'({left} {op} {right})'
+        return f'{left} {op} {right}'
 
 
 def translate_int_expr(match):
@@ -105,7 +105,7 @@ def translate_int_expr(match):
         left, op, right = match.groups()[1:]
         left = translate_to_python(left)
         right = translate_to_python(right)
-        return f'({left} {op} {right})'
+        return f'{left} {op} {right}'
 
 
 def translate_list_expr(match):
