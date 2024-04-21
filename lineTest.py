@@ -3,6 +3,7 @@ import random
 import string
 import re
 
+# Regex patterns
 assignment_pattern =  r'(?<!\")\b(x|b|s|l)\s*(\w+)\s*is\s*([^;]+)(?!\")'
 variable_pattern = r'\b(x|b|s|l)(\w+)'
 for_loop_pattern = r'for\s*\(\s*(.*)\;\s*(.*)\;\s*(.*)\)\s*\{'
@@ -15,14 +16,18 @@ function_pattern = r'\s*(f\w+)\s*(\(.*\)){'
 curry_pattern = r'\s*(f\w+)\s*(.*)\s*{'
 curry_call = r'(f\w+)\s*([\w ]*)'
 
+# Translates a string of code line by line
 def translate_line_by_line(code):
         lines = code.split("\n")
+        # How indented the current section is
         indent = 0
         output = ""
+        # How many extra endings there are, only used for currying
         extra = 0
+        # Things that are added to the end of sections, ie return statements
         endings = []
         for line in lines:
-                # Remove indents if it is ending an indented block thing
+                # Remove indent if it is ending an indented block thing
                 if line.find("}") != -1:
                         line = line.replace("}", "")
                         if extra > 0:
@@ -39,25 +44,26 @@ def translate_line_by_line(code):
                                 endings.remove(endings[index])
                                 indent -= 1
                 
-
+                # Add the appropriate tabs
                 output += "\t" * indent
         
                 # Translate assignments
                 line = re.sub(assignment_pattern, lambda m: translate_assignment(m), line)
 
-                # Translate variables
+                # Translate variables | Does this do anything? / Should it
                 line = re.sub(variable_pattern, lambda m: translate_variable(m), line)
 
-                # # Translate output and input
+                # Translate output and input
                 line = re.sub(output_pattern, lambda m: translate_output(m), line)
                 line = re.sub(input_pattern, lambda m: translate_input(m), line)
 
-                # Translate loops
+                # Translate while loop
                 if(re.search(while_loop_pattern, line)):
                         line = re.sub(while_loop_pattern, lambda m: translate_while_loop(m), line)
                         endings.append("")
                         indent += 1
 
+                # Translate for loop
                 if(re.search(for_loop_pattern, line)):
                         init, condition, every = re.search(for_loop_pattern, line).groups()
                         real_line = init + "\n" + ("\t" * indent)
@@ -86,12 +92,14 @@ def translate_line_by_line(code):
 
                 # Translate curry function heads
                 if(re.search(curry_pattern, line)):
+                        # Add the overall header
                         name, args = re.search(curry_pattern, line).groups()
                         args = args.split()
                         real_line = "\t" * indent
                         real_line += f'def {name}({args[0]}):'
                         indent += 1
                         
+                        # Add the headers for each argument
                         for j in range(1, len(args)):
                                 real_line += '\n' + ("\t" * indent)
                                 fname = ''.join(random.choices(string.ascii_letters, k = 10))
