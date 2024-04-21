@@ -1,7 +1,7 @@
 import io
 import sys
 import unittest
-from translator import translate_to_python, run_code
+from old_translator import translate_to_python, run_code
 
 class TestTranslator(unittest.TestCase):
     def test_translate_while_expression(self):

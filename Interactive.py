@@ -1,4 +1,4 @@
-from lineTest import translate_line_by_line
+from translator import translate_line_by_line
 
 print("Type 'exit' to leave")
 user = input()

@@ -1,4 +1,4 @@
-from lineTest import translate_line_by_line
+from translator import translate_line_by_line
 
 file = input("Name of file to translate/run: ")
 f = open(file, "r")

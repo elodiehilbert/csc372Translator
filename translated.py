@@ -1,73 +1,44 @@
-xNum = int(5)
-print(xNum + 5)
-print(xNum - 2)
-print(xNum * 3)
-print(xNum / 5)
-print(12 % 5)
-print(1 or 0)
-print(1 and 1)
-print(1 < 5 and not 1)
-print(5 > 3)
-print(3 >= 3)
-
-bVal = bool(1 or 0)
-print(bVal)
-
-sThing = "Hello"
-print(sThing)
-
-if 5 > 3:
-	print(5)
-	
+xNum1 = int(input("Give me an integer: "))
+xNum2 = int(input("Give me another integer: "))
 
 
-if 5 < 4:
-	print("No")
+if xNum1 > xNum2:
+	print("Max =", xNum1)
 	
 else:
-	print("yesy")
+	print("Max =", xNum2)
 	
 
 
-xJ = int(0)
-while xJ < 3:
-	xI = int(0)
-	while xI < 3:
-		print(xJ + xI)
-		xI += 1
+print("Sum =", xNum1 + xNum2)
+
+if xNum1 > xNum2:
+	print("Difference=", xNum1 - xNum2)
 	
-	xJ += 1
-
-
-sInput = input("Say Something: ")
-print(sInput)
-
-def fMultiply(xa, xb):
-	return xa * xb
+else:
+	print("Difference=", xNum2 - xNum1)
 	
 
 
-print(fMultiply(5, 3))
+print("Product =", xNum1 * xNum2)
 
-def fAdd(xa):
-	def kLqSWMoIho(xb):
-		return xa + xb
-	return kLqSWMoIho
-
-
-def fAddFiveNums(xa):
-	def roBtigjhAv(xb):
-		def TVeBfTxpnh(xc):
-			def OsarvMGQxc(xd):
-				def lZzhMGbjFt(xe):
-					return xa + xb + xc + xd +xe
-				return lZzhMGbjFt
-			return OsarvMGQxc
-		return TVeBfTxpnh
-	return roBtigjhAv
+if xNum1 > xNum2:
+	xMin = int(xNum2)
+	
+else:
+	xMin = int(xNum1)
+	
 
 
-fAddThree= fAdd(3)
+xVal = 1
+while xVal <= xMin - 1:
+	if (xNum1 % xVal == 0) and (xNum2 % xVal == 0):
+		xGCD = int(xVal)
+		
+	
+	xVal+= 1
 
-print(fAddThree(20))
-print(fAdd(10)(20))
+
+print("GCD =", xGCD)
+
+print("LCM =", xNum1 / xGCD * xNum2)
