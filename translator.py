@@ -97,7 +97,10 @@ def translate_line_by_line(code):
                         name, args = re.search(curry_pattern, line).groups()
                         args = args.split()
                         real_line = "\t" * indent
-                        real_line += f'def {name}({args[0]}):'
+                        if len(args) == 0:
+                            real_line += f'def {name}():'
+                        else:
+                             real_line += f'def {name}({args[0]}):'
                         indent += 1
                         
                         for j in range(1, len(args)):
